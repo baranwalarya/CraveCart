@@ -12,7 +12,8 @@ import shopRouter from "./routes/shop.routes.js";
 const app = express();
 const port = process.env.PORT || 5000
 app.use(cors({
-    origin:"https://cravecart-frontend-so1j.onrender.com/",
+
+    origin:"https://cravecart-frontend-so1j.onrender.com",
     credentials:true
 }))
 
