@@ -33,6 +33,7 @@ function SignIn() {
         email,password
       },{withCredentials:true})
       dispatch(setUserData(result.data))
+      navigate("/")
       setErr("")
       setLoading(false)
     }catch(e){
