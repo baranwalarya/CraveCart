@@ -5,7 +5,7 @@ import { FaUtensils } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import useGetMyShop from "../hooks/useGetMyShop.jsx";
 import { FaPen } from "react-icons/fa";
-import OwnerItemCard from "./ownerItemCard.jsx";
+import OwnerItemCard from "./OwnerItemCard.jsx";
 
 function OwnerDashboard() {
     useGetMyShop()
