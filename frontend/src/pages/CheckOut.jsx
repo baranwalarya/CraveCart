@@ -12,6 +12,7 @@ import axios from 'axios';
 import { MdDeliveryDining } from "react-icons/md";
 import { FaMobileScreenButton } from "react-icons/fa6";
 import { FaCreditCard } from "react-icons/fa6";
+import { serverUrl } from '../App';
 
 function RecenterMap({location}){
     if(location.lat && location.lon){
@@ -31,6 +32,10 @@ function CheckOut() {
     const apiKey=import.meta.env.VITE_GEOAPIKEY
     const deliveryFee=totalAmount>500?0:40
     const AmountWithDeliveryFee=totalAmount+deliveryFee
+
+
+
+
 
     const onDragEnd=(e)=>{
         const {lat,lng}=e.target._latlng
@@ -65,6 +70,24 @@ const getLatLngbyAddress=async ()=>{
     } 
     catch (error) {
         console.log(error)
+    }
+}
+
+const handlePlaceOrder=async () => {
+    try {
+        const result=await axios.post(`${serverUrl}/api/order/place-order`,{
+            paymentMethod,
+            deliveryAddress:{
+                text:addressInput,
+                latitude:location.lat,
+                longitude:location.lon
+            },
+            totalAmount,
+            cartItems
+        },{withCredentials:true})
+        console.log(result.data)
+    } catch (error) {
+        
     }
 }
 
@@ -168,7 +191,7 @@ useEffect(()=>{
                 </div>
             </section>
 
-            <button className='w-full bg-[#ff4d2d] hover:bg-[#e64526] text-white py-3 rounded-xl font-semibold'>{paymentMethod=="COD"?"Place Order": "Pay & Place"}</button>
+            <button className='w-full bg-[#ff4d2d] hover:bg-[#e64526] text-white py-3 rounded-xl font-semibold' onClick={handlePlaceOrder}>{paymentMethod=="COD"?"Place Order": "Pay & Place"}</button>
 
         </div>
     </div>

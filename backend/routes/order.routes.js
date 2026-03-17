@@ -1,5 +1,6 @@
 import express from "express"
 import isAuth from "../middlewares/isAuth.js"
+import { placeOrder } from "../controllers/order.controllers.js"
 
 
 const orderRouter = express.Router()
