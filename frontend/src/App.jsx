@@ -17,7 +17,12 @@ import CartPage from "./pages/CartPage.jsx";
 import CheckOut from "./pages/CheckOut.jsx";
 
 
-export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
+// export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
+
+export const serverUrl =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://cravecart-backend-j2vq.onrender.com";
 
 function App() {
   useGetCurrentUser()

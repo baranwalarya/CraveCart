@@ -1,10 +1,10 @@
-
-
+import express from "express"
+import isAuth from "../middlewares/isAuth.js"
 
 
 const orderRouter = express.Router()
 
-orderRouter.post("/create-edit",isAuth,upload.single("image"),create_EditShop)
+orderRouter.post("/place-order",isAuth,placeOrder)
 
 
 
