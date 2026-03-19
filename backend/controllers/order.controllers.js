@@ -4,7 +4,7 @@ import Shop from "../models/shop.model.js"
 export const placeOrder=async (req,res) => {
     try {
         const {cartItems,paymentMethod,deliveryAddress,totalAmount}=req.body
-        if(cartItems.length==0 || !cartItems){
+        if(!cartItems || cartItems.length === 0){
             return res.status(400).json({message:"Cart is empty"})
         }
         if(!deliveryAddress.text || !deliveryAddress.latitude || !deliveryAddress.longitude){
@@ -14,7 +14,7 @@ export const placeOrder=async (req,res) => {
         const groupItemByShop={}
 
 
-        cartItems.forEach(item => {
+        cartItems.forEach((item) => {
             const shopId=item.shop
             if(!groupItemByShop[shopId]){
                 groupItemByShop[shopId]=[]
@@ -22,7 +22,7 @@ export const placeOrder=async (req,res) => {
             groupItemByShop[shopId].push(item)
         });
 
-        const shopOrders=await Object.keys(groupItemByShop).map(async(shopId)=>{
+        const shopOrders=await Promise.all(Object.keys(groupItemByShop).map(async(shopId)=>{
             const shop=await Shop.findById(shopId).populate("owner")
             if(!shop){
                 return res.status(400).json({message:"Shop Not Found"})
@@ -34,13 +34,14 @@ export const placeOrder=async (req,res) => {
                 owner:shop.owner._id,
                 subtotal,
                 shopOrderItems:items.map((i)=>({
-                    item:i._id,
+                    item: i.item || i._id,
                     price:i.price,
                     quantity:i.quantity,
                     name:i.name
                 }))
             }
-        })
+        }))
+
 
         const newOrder=await Order.create({
             user:req.userId,
@@ -58,3 +59,12 @@ export const placeOrder=async (req,res) => {
 }
 
 
+export const getUserOrders=async (req,res) => {
+    try {
+        const orders=await Order.find({user:req.userId})
+        .sort({createdAt:-1})
+        .populate("shopOrders")
+    } catch (error) {
+        
+    }
+}

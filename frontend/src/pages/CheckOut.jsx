@@ -86,8 +86,9 @@ const handlePlaceOrder=async () => {
             cartItems
         },{withCredentials:true})
         console.log(result.data)
+        navigate("/order-placed")
     } catch (error) {
-        
+        console.log(error)
     }
 }
 
