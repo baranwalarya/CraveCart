@@ -24,18 +24,17 @@ export const placeOrder=async (req,res) => {
 
         const shopOrders=await Promise.all(Object.keys(groupItemByShop).map(async(shopId)=>{
             const shop=await Shop.findById(shopId).populate("owner")
-            console.log(shop)
+           console.log(shop)
             if(!shop){
                 return res.status(400).json({message:"Shop Not Found"})
             }
             const items=groupItemByShop[shopId]
             const subtotal=items.reduce((sum,i)=>sum+Number(i.price)*Number(i.quantity),0)
-            //  items.map(i=>console.log(i))
-            console.log(i)
+            
             return {
                 shop:shop._id,
                 owner: shop.owner._id,
-                subtotal,
+            
                 shopOrderItems:items.map((i)=>({
                     item:i.id,
                     price:i.price,
@@ -62,12 +61,14 @@ export const placeOrder=async (req,res) => {
 }
 
 
-export const getUserOrders=async (req,res) => {
+export const getUserOrders = async (req, res) => {
     try {
-        const orders=await Order.find({user:req.userId})
-        .sort({createdAt:-1})
-        .populate("shopOrders")
-    } catch (error) {
+        const orders = await Order.find({ user: req.userId })
+            .sort({ createdAt: -1 })
+            .populate("shopOrders")
         
+        return res.status(200).json(orders) // ✅ response bhejo
+    } catch (error) {
+        return res.status(500).json({ message: `Get orders error ${error}` }) // ✅ error handle karo
     }
 }
