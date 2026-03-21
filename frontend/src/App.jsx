@@ -19,8 +19,8 @@ import OrderPlaced from "./pages/OrderPlaced.jsx";
 import MyOrders from "./pages/MyOrders.jsx";
 
 
-// export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
-export const serverUrl="http://localhost:8000";
+export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
+// export const serverUrl="http://localhost:8000";
 
 function App() {
   useGetCurrentUser()

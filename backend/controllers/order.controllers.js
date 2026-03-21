@@ -67,7 +67,7 @@ export const getUserOrders = async (req, res) => {
             .sort({ createdAt: -1 })
             .populate("shopOrders")
         
-        return res.status(200).json(orders) // ✅ response bhejo
+        return res.status(200).json(orders) 
     } catch (error) {
         return res.status(500).json({ message: `Get orders error ${error}` }) // ✅ error handle karo
     }
