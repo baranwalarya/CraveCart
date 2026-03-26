@@ -17,6 +17,8 @@ import CartPage from "./pages/CartPage.jsx";
 import CheckOut from "./pages/CheckOut.jsx";
 import OrderPlaced from "./pages/OrderPlaced.jsx";
 import MyOrders from "./pages/MyOrders.jsx";
+import useGetMyOrders from "./hooks/useGetMyOrders.jsx";
+import useUpdateLocation from "./hooks/useUpdateLocation.jsx";
 
 
 export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
@@ -24,10 +26,12 @@ export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
 
 function App() {
   useGetCurrentUser()
+  useUpdateLocation()
   useGetLocation()
   useGetMyShop()
   useGetShopByCity()
   useGetItemByCity()
+  useGetMyOrders()
 
   const {userData}=useSelector(state=>state.user)
   return (

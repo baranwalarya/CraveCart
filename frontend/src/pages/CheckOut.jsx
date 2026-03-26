@@ -13,6 +13,7 @@ import { MdDeliveryDining } from "react-icons/md";
 import { FaMobileScreenButton } from "react-icons/fa6";
 import { FaCreditCard } from "react-icons/fa6";
 import { serverUrl } from '../App';
+import { addMyOrder } from '../redux/userSlice';
 
 function RecenterMap({location}){
     if(location.lat && location.lon){
@@ -85,7 +86,7 @@ const handlePlaceOrder=async () => {
             totalAmount,
             cartItems
         },{withCredentials:true})
-        console.log(result.data)
+        dispatch(addMyOrder(result.data))
         navigate("/order-placed")
     } catch (error) {
         console.log(error)

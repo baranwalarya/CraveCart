@@ -1,5 +1,6 @@
 import Order from "../models/order.model.js"
 import Shop from "../models/shop.model.js"
+import User from "../models/user.model.js"
 
 export const placeOrder=async (req,res) => {
     try {
@@ -24,7 +25,7 @@ export const placeOrder=async (req,res) => {
 
         const shopOrders=await Promise.all(Object.keys(groupItemByShop).map(async(shopId)=>{
             const shop=await Shop.findById(shopId).populate("owner")
-           console.log(shop)
+        //    console.log(shop)
             if(!shop){
                 return res.status(400).json({message:"Shop Not Found"})
             }
@@ -34,7 +35,7 @@ export const placeOrder=async (req,res) => {
             return {
                 shop:shop._id,
                 owner: shop.owner._id,
-            
+                subtotal,
                 shopOrderItems:items.map((i)=>({
                     item:i.id,
                     price:i.price,
@@ -53,6 +54,9 @@ export const placeOrder=async (req,res) => {
             shopOrders
         })
 
+        await newOrder.populate("shopOrders.shopOrderItems.item","name image price")
+        await newOrder.populate("shopOrders.shop","name")
+
         return res.status(201).json(newOrder)
 
     } catch (error) {
@@ -61,14 +65,60 @@ export const placeOrder=async (req,res) => {
 }
 
 
-export const getUserOrders = async (req, res) => {
+export const getMyOrders = async (req, res) => {
     try {
-        const orders = await Order.find({ user: req.userId })
+        const user=await User.findById(req.userId)
+        if(user.role=="user"){
+            const orders = await Order.find({ user: req.userId })
             .sort({ createdAt: -1 })
-            .populate("shopOrders")
-        
-        return res.status(200).json(orders) 
+            .populate("shopOrders.shop","name")
+            .populate("shopOrders.owner","name email mobile")
+            .populate("shopOrders.shopOrderItems.item","name image price")
+        return res.status(200).json(orders)
+        }else if(user.role=="owner"){
+            const orders = await Order.find({ "shopOrders.owner" : req.userId })
+            .sort({ createdAt: -1 })
+            .populate("shopOrders.shop","name")
+            .populate("user")
+            .populate("shopOrders.shopOrderItems.item","name image price")
+
+            const filteredOrders=orders.map(order=>({
+                _id:order._id,
+                paymentMethod:order.paymentMethod,
+                user:order.user,
+                shopOrders:order.shopOrders.find(o=>o.owner._id==req.userId),
+                createdAt:order.createdAt,
+                deliveryAddress:order.deliveryAddress
+            }))
+
+        return res.status(200).json(filteredOrders)
+        }
+
     } catch (error) {
-        return res.status(500).json({ message: `Get orders error ${error}` }) // ✅ error handle karo
+        return res.status(500).json({ message: `Get user orders error ${error}` }) 
     }
 }
+
+
+export const updateOderStatus=async (req,res) => {
+    try {
+        const {orderId,shopId}=req.params
+        const {status} = req.body
+        const order=await Order.findById(orderId)
+
+        const shopOrder= await order.shopOrders.find(o=>o.shop==shopId)
+        if(!shopOrder){
+            return res.status(400).json({message:"Shop order not found"})
+        }
+        shopOrder.status=status
+
+        
+        await shopOrder.save()
+        await order.save()
+        return res.status(200).json(shopOrder.status)
+    } catch (error) {
+       console.error("FULL ERROR:", error.message)
+    return res.status(500).json({ message: error.message })
+    }
+}
+
