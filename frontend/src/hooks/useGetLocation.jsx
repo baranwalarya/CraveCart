@@ -30,11 +30,15 @@ function useGetLocation() {
           }
         );
 
+
+
         const location = result?.data?.results?.[0];
 
         if (!location) return;   // ⭐ crash prevent
 
-        dispatch(setCurrentCity(location.city));
+        console.log(result.data)
+
+        dispatch(setCurrentCity(location.city) || location.county);
         dispatch(setCurrentState(location.state));
 
         dispatch(

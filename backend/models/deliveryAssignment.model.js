@@ -13,7 +13,7 @@ const deliveryassignmentSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         required:true
     },
-    brodcastedto:[
+    brodcastedTo:[
         {
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
