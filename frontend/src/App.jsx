@@ -21,8 +21,8 @@ import useGetMyOrders from "./hooks/useGetMyOrders.jsx";
 import useUpdateLocation from "./hooks/useUpdateLocation.jsx";
 
 
-// export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
-export const serverUrl="http://localhost:8000";
+export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
+// export const serverUrl="http://localhost:8000";
 
 function App() {
   useGetCurrentUser()
