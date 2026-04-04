@@ -6,15 +6,35 @@ import { FaChevronCircleLeft } from "react-icons/fa";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import FoodCard from "./FoodCard.jsx";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { serverUrl } from "../App.jsx";
 
 function UserDashboard() {
-    const {currentCity , shopInMyCity,itemsInMyCity}=useSelector(state=>state.user)
+    const {currentCity , shopInMyCity,itemsInMyCity,searchItems}=useSelector(state=>state.user)
     const cateScrollRef=useRef()
     const shopScrollRef=useRef()
+    const navigate=useNavigate()
     const [showLeftCateButton,setShowLeftCateButton] = useState(false)
     const [showRightCateButton,setShowRightCateButton] = useState(false)
     const [showLeftShopButton,setShowLeftShopButton] = useState(false) 
     const [showRightShopButton,setShowRightShopButton] = useState(false)
+    const [updatedItemsList,setUpdatedItemsList] = useState()
+
+
+
+    const handleFilterByCategory = (category) => {
+        if(category=="All"){
+            setUpdatedItemsList(itemsInMyCity)
+        }else{
+            const filteredList=itemsInMyCity?.filter(i=>i.category===category)
+            setUpdatedItemsList(filteredList)
+        }
+    }
+
+    useEffect(()=>{
+        setUpdatedItemsList(itemsInMyCity)
+    },[itemsInMyCity])
 
     const updateButton=(ref,setLeftButton,setRightButton)=>{
         const element=ref.current
@@ -32,8 +52,8 @@ function UserDashboard() {
             })
         }
     }
-    
 
+    
     useEffect(()=>{
         if(cateScrollRef.current){
              updateButton(cateScrollRef,setShowLeftCateButton,setShowRightCateButton)
@@ -59,6 +79,19 @@ function UserDashboard() {
         <div className="w-screen min-h-screen  flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto">
             <Nav/>
 
+            {searchItems && searchItems.length>0 && (
+                <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-5 bg-white shadow-md rounded-2xl mt-4">
+                    <h1 className="text-gray-900 text-2xl sm:text-3xl font-semibold border-b border-gray-200 pb-2">
+                        Search Results
+                    </h1>
+                    <div className="w-full h-auto flex flex-wrap gap-6 justify-center">
+                        {searchItems.map((item)=>(
+                            <FoodCard data={item} key={item._id}/>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Category Div */}
             <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
                 <h1 className="text-gray-800 text-2xl sm:text-3xl">Inspiration for your first order</h1>
@@ -72,7 +105,7 @@ function UserDashboard() {
                     
                     <div className="w-full flex overflow-x-auto gap-4 pb-2" ref={cateScrollRef}>
                         {categories.map((cate, index) => (
-                        <CategoryCard name={cate.category} image={cate.image} key={index} />
+                        <CategoryCard name={cate.category} image={cate.image} key={index} onClick={()=>handleFilterByCategory(cate.category)}/>
                         ))}
                     </div>
 
@@ -100,7 +133,7 @@ function UserDashboard() {
                     
                     <div className="w-full flex overflow-x-auto gap-4 pb-2" ref={shopScrollRef}>
                         {shopInMyCity.map((shop, index) => (
-                        <CategoryCard name={shop.name} image={shop.image} key={index} />
+                        <CategoryCard name={shop.name} image={shop.image} key={index} onClick={()=>navigate(`/shop/${shop._id}`)}/>
                         ))}
                     </div>
 
@@ -118,7 +151,7 @@ function UserDashboard() {
                 <h1 className="text-gray-800 text-2xl sm:text-3xl">Suggested Food Items</h1>
 
                 <div className="w-full h-auto flex flex-wrap gap-[20px] justify-center">
-                        {itemsInMyCity?.map((item,index)=>(
+                        {updatedItemsList?.map((item,index)=>(
                             <FoodCard key={index} data={item}/>
                         ))}
                 </div>
