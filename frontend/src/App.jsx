@@ -23,8 +23,8 @@ import TrackOrderPage from "./pages/TrackOrderPage.jsx";
 import Shop from "./pages/Shop.jsx";
 
 
-// export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
-export const serverUrl="http://localhost:8000";
+export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
+// export const serverUrl="http://localhost:8000";
 
 function App() {
   useGetCurrentUser()
