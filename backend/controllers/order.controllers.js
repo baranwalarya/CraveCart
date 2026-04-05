@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import DeliveryAssignment from "../models/deliveryAssignment.model.js"
 import Order from "../models/order.model.js"
 import Shop from "../models/shop.model.js"
@@ -7,9 +8,10 @@ import RazorPay from "razorpay"
 import dotenv from "dotenv"
 dotenv.config()
 
+// BAAD MEIN (correct)
 let instance = new RazorPay({
-  key_id: process.env.RAZORPAY_API_KEY,
-  key_secret: process.env.RAZORPAY_API_SECRET,
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 
