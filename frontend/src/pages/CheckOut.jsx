@@ -112,6 +112,8 @@ const openRazorpayWindow=(orderId,razorOrder)=>{
             try {
                 const result=await axios.post(`${serverUrl}/api/order/verify-payment` , {
                     razorpay_payment_id:response.razorpay_payment_id,
+                    razorpay_order_id:response.razorpay_order_id,
+                    razorpay_signature:response.razorpay_signature,
                     orderId
                 },{withCredentials:true})
                 dispatch(addMyOrder(result.data))
