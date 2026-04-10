@@ -549,8 +549,11 @@ export const verifyDeliveryOTP=async (req,res) => {
 export const getTodayDeliveries=async (req,res) => {
     try {
         const deliveryBoyId=req.userId
-        const startsOfDay=new Date()
-        startsOfDay.setHours(0,0,0,0)
+        const now = new Date()
+        const istOffset = 5.5 * 60 * 60 * 1000
+        const istNow = new Date(now.getTime() + istOffset)
+        istNow.setUTCHours(0, 0, 0, 0)
+        const startsOfDay = new Date(istNow.getTime() - istOffset)
 
         const orders=await Order.find({
             "shopOrders.assignedDeliveryBoy":deliveryBoyId,
@@ -575,7 +578,8 @@ export const getTodayDeliveries=async (req,res) => {
         let stats={}
 
         todaysDeliveries.forEach(shopOrder=>{
-            const hour=new Date(shopOrder.deliveredAt).getHours()
+            const hour = parseInt(new Date(shopOrder.deliveredAt)
+    .toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false }))
             stats[hour]=(stats[hour] || 0) + 1
         })
 
