@@ -4,7 +4,7 @@ import SignUp from "./pages/SignUp"
 import SignIn from "./pages/SignIn"
 import ForgotPass from "./pages/ForgotPass";
 import useGetCurrentUser from "./hooks/useGetCurrentUser.jsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Home from "./pages/Home.jsx";
 import useGetLocation from "./hooks/useGetLocation.jsx";
 import useGetMyShop from "./hooks/useGetMyShop.jsx";
@@ -21,12 +21,17 @@ import useGetMyOrders from "./hooks/useGetMyOrders.jsx";
 import useUpdateLocation from "./hooks/useUpdateLocation.jsx";
 import TrackOrderPage from "./pages/TrackOrderPage.jsx";
 import Shop from "./pages/Shop.jsx";
+import { useEffect } from "react";
+import { setSocket } from "./redux/userSlice.js";
+import { io } from "socket.io-client"
 
 
 export const serverUrl="https://cravecart-backend-j2vq.onrender.com";
 // export const serverUrl="http://localhost:8000";
 
 function App() {
+  const {userData}=useSelector(state=>state.user)
+  const dispatch=useDispatch()
   useGetCurrentUser()
   useUpdateLocation()
   useGetLocation()
@@ -35,7 +40,20 @@ function App() {
   useGetItemByCity()
   useGetMyOrders()
 
-  const {userData}=useSelector(state=>state.user)
+  useEffect(()=>{
+    const socketInstance=io(serverUrl,{withCredentials:true})
+    dispatch(setSocket(socketInstance))
+    socketInstance.on('connect',()=>{
+      if(userData){
+        socketInstance.emit('identity',{userId:userData._id})
+      }
+    })
+    return ()=>{
+      socketInstance.disconnect()
+    }
+  },[userData?._id])
+
+  
   return (
     <Routes>
       <Route path='/signup' element={!userData?<SignUp/> : <Navigate to={"/"}/>} />

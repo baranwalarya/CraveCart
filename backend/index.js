@@ -9,13 +9,33 @@ import userRouter from "./routes/user.routes.js";
 import itemRouter from "./routes/item.routes.js";
 import shopRouter from "./routes/shop.routes.js";
 import orderRouter from "./routes/order.routes.js";
+import http from "http"
+import { Server } from "socket.io";
+import { socketHandler } from "./utils/socket.js";
 
 const app = express();
-const port = process.env.PORT || 5000
-app.use(cors({
+const server=http.createServer(app)
+
+
+const io=new Server(server,{
+    cors:{
      origin:[
         // "http://localhost:5173",
         "https://cravecart-frontend-so1j.onrender.com"
+    ],
+    credentials:true,
+    methods:['POST','GET']
+}})
+
+app.set("io",io)
+
+
+
+const port = process.env.PORT || 5000
+app.use(cors({
+     origin:[
+        "http://localhost:5173",
+        // "https://cravecart-frontend-so1j.onrender.com"
     ],
     credentials:true
 }))
@@ -28,8 +48,8 @@ app.use("/api/item",itemRouter)
 app.use("/api/shop",shopRouter)
 app.use("/api/order",orderRouter)
 
-
-app.listen(port, () => {
+socketHandler(io)
+server.listen(port, () => {
     connectdb()
     console.log(`Listening to port on ${port}`);
 })

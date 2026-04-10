@@ -21,6 +21,7 @@ const handleUpdateStatus = async (orderId,shopId,status) => {
     console.log(error)
   }
 }
+
   return (
     <div className='bg-white rounded-lg shadow p-4 space-y-4'>
 
@@ -30,6 +31,8 @@ const handleUpdateStatus = async (orderId,shopId,status) => {
         <h2 className='text-lg font-semibold text-gray-800'>{data.user.fullName}</h2>
         <p className='text-sm text-gray-500'>{data.user.email}</p>
         <p className='flex items-center gap-2 text-sm text-gray-600 mt-1'><FaPhone /> <span>{data.user.mobile}</span></p>
+        {data.paymentMethod=="Online"?<p className='gap-2 text-sm text-gray-600'>payment: {data.payment?"true":"false"}</p> : <p className='gap-2 text-sm text-gray-600'>Payment Method: {data.paymentMethod}</p>}
+        
       </div>
 
       {/* Delivery Address */}
